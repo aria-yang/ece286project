@@ -3,31 +3,31 @@ import './App.css';
 import { useState } from 'react'
 import SingleCard from './components/SingleCard'
 
-const cardImages = [{"src": "/img/0.png"}, 
-  { "src": "/img/1.png" }, 
-  { "src": "/img/2.png" }, 
-  { "src": "/img/3.png" }, 
-  { "src": "/img/4.png" }, 
-  { "src": "/img/5.png" }, 
-  { "src": "/img/6.png" }, 
-  { "src": "/img/7.png" }, 
-  { "src": "/img/8.png" }, 
-  { "src": "/img/9.png" }, 
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" },
-  { "src": "/img/Blank.png" }
+const cardImages = [{"src": "/img/0.png", clicked: false}, 
+  { "src": "/img/1.png", clicked: false }, 
+  { "src": "/img/2.png", clicked: false }, 
+  { "src": "/img/3.png", clicked: false }, 
+  { "src": "/img/4.png", clicked: false }, 
+  { "src": "/img/5.png", clicked: false }, 
+  { "src": "/img/6.png", clicked: false }, 
+  { "src": "/img/7.png", clicked: false }, 
+  { "src": "/img/8.png", clicked: false }, 
+  { "src": "/img/9.png", clicked: false }, 
+  { "src": "/img/Blank.png", clicked: false },
+  { "src": "/img/Blank2.png", clicked: false },
+  { "src": "/img/Blank3.png", clicked: false },
+  { "src": "/img/Blank4.png", clicked: false },
+  { "src": "/img/Blank5.png", clicked: false },
+  { "src": "/img/Blank6.png", clicked: false },
+  { "src": "/img/Blank7.png", clicked: false },
+  { "src": "/img/Blank8.png", clicked: false },
+  { "src": "/img/Blank9.png", clicked: false },
+  { "src": "/img/Blank10.png", clicked: false },
+  { "src": "/img/Blank11.png", clicked: false },
+  { "src": "/img/Blank12.png", clicked: false },
+  { "src": "/img/Blank13.png", clicked: false },
+  { "src": "/img/Blank14.png", clicked: false },
+  { "src": "/img/Blank15.png", clicked: false }
 ]
 
 function App() {
@@ -45,14 +45,16 @@ function App() {
   const [choiceNine, setChoiceNine] = useState(null)
   const [choiceTen, setChoiceTen] = useState(null)
 
-  // shuffle cards
+  // Shuffle the cards and restart the game
   const shuffleCards = () => {
     const shuffledCards = [...cardImages]
       .sort(() => Math.random() - 0.5)
-      .map((card) => ({...card, id: Math.random() }))
+      .map((card) => ({...card, id: Math.random()}))
 
     setCards(shuffledCards)
     setTurns(0)
+    setScore(0)
+    setChoices(Array(10).fill(null))
   }
 
   // Store the selected card in the choices array
@@ -69,15 +71,19 @@ function App() {
       const updatedChoices = [...choices];
       updatedChoices[nextChoiceIndex] = filename;
       setChoices(updatedChoices);
-
+      setCards(prevCards => 
+        prevCards.map(c => 
+          c.src === card.src ? { ...c, clicked: true } : c
+        )
+      );
       if (filename === expectedImage) {
         setScore(prevScore => prevScore + 1);
-        console.log(`Correct! ${filename}. Score: ${score + 1}`);
-      } else {
-        console.log(`Incorrect. Expected: ${expectedImage}, Got: ${filename}. Score: ${score}`);
       }
     }
+    setTurns(prevTurns => prevTurns + 1);
   };
+
+  console.log(cards)
 
   // const gameOver = () => {
   //   if (choices.includes(null)) {
