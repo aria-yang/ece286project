@@ -1,7 +1,9 @@
 // import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react'
+import { useEffect } from 'react'
 import SingleCard from './components/SingleCard'
+import Cookies from 'js-cookie';
 
 const cardImages = [{"src": "/img/0.png", clicked: false}, 
   { "src": "/img/1.png", clicked: false }, 
@@ -49,9 +51,19 @@ function App() {
   const [choiceNine, setChoiceNine] = useState(null)
   const [choiceTen, setChoiceTen] = useState(null)
 
-
+  useEffect(() => {
+    if (Cookies.get('played')) {
+      alert("You've already played the game!");
+    }
+  }, []);
+  
   // Shuffle the cards and restart the game
   const shuffleCards = () => {
+    if (Cookies.get('played')) {
+      alert("You've already played the game!");
+      return;
+    }
+
     const shuffledCards = [...cardImages]
       .sort(() => Math.random() - 0.5)
       .map((card) => ({...card, id: Math.random()}));
@@ -66,6 +78,9 @@ function App() {
     setTimeout(() => {
       setGameStart(false); // Hide cards after 7 seconds
     }, 7000);
+
+    // Set a cookie to expire in 24 hours
+    Cookies.set('played', 'true', { expires: 1 });
   }
 
 
