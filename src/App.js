@@ -34,6 +34,10 @@ function App() {
   const [cards, setCards] = useState([])
   const [turns, setTurns] = useState(0)
   const [score, setScore] = useState(0); // Initialize score to 0
+  const [gameStart, setGameStart] = useState(true)
+  const [gameOver, setGameOver] = useState(false)
+  const accuracy = turns > 0 ? ((score / turns) * 100).toFixed(1) : 0;
+
   const [choiceOne, setChoiceOne] = useState(null)
   const [choiceTwo, setChoiceTwo] = useState(null)
   const [choiceThree, setChoiceThree] = useState(null)
@@ -45,17 +49,25 @@ function App() {
   const [choiceNine, setChoiceNine] = useState(null)
   const [choiceTen, setChoiceTen] = useState(null)
 
+
   // Shuffle the cards and restart the game
   const shuffleCards = () => {
     const shuffledCards = [...cardImages]
       .sort(() => Math.random() - 0.5)
-      .map((card) => ({...card, id: Math.random()}))
+      .map((card) => ({...card, id: Math.random()}));
 
-    setCards(shuffledCards)
-    setTurns(0)
-    setScore(0)
-    setChoices(Array(10).fill(null))
+    setCards(shuffledCards);
+    setTurns(0);
+    setScore(0);
+    setChoices(Array(10).fill(null));
+    setGameOver(false);
+    setGameStart(true); // Start game with initial reveal
+
+    setTimeout(() => {
+      setGameStart(false); // Hide cards after 7 seconds
+    }, 7000);
   }
+
 
   // Store the selected card in the choices array
   const [choices, setChoices] = useState(Array(10).fill(null)); // Initialize choices array with null
@@ -63,8 +75,10 @@ function App() {
 
   // Handle Card Selection
   const handleChoice = (card) => {
+    if (gameOver || card.clicked) return;
     const filename = card.src.split('/').pop(); // Extract "0.png" from "/img/0.png"
     const nextChoiceIndex = choices.findIndex(choice => choice === null);
+    setTurns(prevTurns => prevTurns + 1);
 
     if (nextChoiceIndex !== -1) {
       const expectedImage = expectedImages[nextChoiceIndex];
@@ -80,33 +94,31 @@ function App() {
         setScore(prevScore => prevScore + 1);
       }
     }
-    setTurns(prevTurns => prevTurns + 1);
+    if (turns === 9) {
+      setGameOver(true)
+    }
   };
 
   console.log(cards)
-
-  // const gameOver = () => {
-  //   if (choices.includes(null)) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
 
   return (
     <div className="App">
       <h1>Number Game</h1>
       <button onClick={shuffleCards}>Start Game</button>
-      <p>Score: {score} Turns: {turns}</p>
+      <p>Score: {score} | Turns: {turns}</p>
+
+      {/* If game over */}
+      {gameOver && <h2>Game Over! Your final score: {score}, Accuracy: {accuracy}%</h2>}
       <div className="card-grid">
         {cards.map(card => (
           <SingleCard 
             key={card.id} 
             card={card} 
             handleChoice={handleChoice}
+            flipped={gameStart || gameOver}
           />
         ))}
       </div>
-      
     </div>
   );
 }
