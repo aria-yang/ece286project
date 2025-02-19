@@ -38,6 +38,8 @@ function App() {
   const [score, setScore] = useState(0); // Initialize score to 0
   const [gameStart, setGameStart] = useState(true)
   const [gameOver, setGameOver] = useState(false)
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
   const accuracy = turns > 0 ? ((score / turns) * 100).toFixed(1) : 0;
 
   const [choiceOne, setChoiceOne] = useState(null)
@@ -74,9 +76,12 @@ function App() {
     setChoices(Array(10).fill(null));
     setGameOver(false);
     setGameStart(true); // Start game with initial reveal
+    setStartTime(null);
+    setEndTime(null);
 
     setTimeout(() => {
       setGameStart(false); // Hide cards after 7 seconds
+      setStartTime(Date.now());
     }, 7000);
 
     // Set a cookie to expire in 24 hours
@@ -111,19 +116,22 @@ function App() {
     }
     if (turns === 9) {
       setGameOver(true)
+      setEndTime(Date.now());
     }
   };
 
   console.log(cards)
+  const timeTaken = startTime && endTime ? ((endTime - startTime) / 1000).toFixed(2) : null;
+
 
   return (
     <div className="App">
       <h1>Number Game</h1>
       <button onClick={shuffleCards}>Start Game</button>
-      <p>Score: {score} | Turns: {turns}</p>
+      <p>Turns: {turns}</p>
 
       {/* If game over */}
-      {gameOver && <h2>Game Over! Your final score: {score}, Accuracy: {accuracy}%</h2>}
+      {gameOver && <p>Game Over! Your final score: {score}, Accuracy: {accuracy}%, Time: {timeTaken} sec</p>}
       <div className="card-grid">
         {cards.map(card => (
           <SingleCard 
