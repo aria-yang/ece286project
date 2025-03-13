@@ -61,9 +61,6 @@ function App() {
   };
 
   useEffect(() => {
-    if (Cookies.get('played')) {
-      alert("You've already played the game!");
-    }
 
     // Call the insertImageAtFiveSeconds function after the game starts
     if (gameStart) {
@@ -127,20 +124,6 @@ function App() {
       <button onClick={shuffleCards}>Start Game</button>
       <p>Turns: {turns}</p>
 
-      {/* If game over */}
-      {gameOver && <p>Game Over! Your final score: {score}, Accuracy: {accuracy}%, Time: {timeTaken} sec</p>}
-
-      <div className="card-grid">
-        {cards.map(card => (
-          <SingleCard 
-            key={card.id} 
-            card={card} 
-            handleChoice={handleChoice}
-            flipped={gameStart || gameOver}
-          />
-        ))}
-      </div>
-
       {/* Single image (left or right) */}
       {image && (
         <img
@@ -160,6 +143,20 @@ function App() {
           }}
         />
       )}
+
+      {/* If game over */}
+      {gameOver && <p>Game Over! Your final score: {score}, Accuracy: {accuracy}%, Time: {timeTaken} sec</p>}
+
+      <div className="card-grid">
+        {cards.map(card => (
+          <SingleCard 
+            key={card.id} 
+            card={card} 
+            handleChoice={handleChoice}
+            flipped={gameStart || gameOver}
+          />
+        ))}
+      </div>
     </div>
   );
 }
