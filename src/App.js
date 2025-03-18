@@ -110,6 +110,7 @@ function App() {
         c.src === card.src ? { ...c, clicked: true } : c
       )
     );
+    setScore(prevScore => prevScore + 1);
     if (turns === 9) {
       setGameOver(true);
       setEndTime(Date.now());
