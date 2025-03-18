@@ -127,22 +127,23 @@ function App() {
       <button onClick={shuffleCards}>Start Game</button>
       <p>Turns: {turns}</p>
 
-      {/* Single image (left or right) */}
+      {/* Single random image (left or right) */}
       {image && (
         <img
           src={image.side === 'left' ? '/ads/sephora.png' : '/ads/travel.png'}
           alt="Random"
           className={`random-image ${image.side}`}
           style={{
-            position: 'fixed', // Use fixed positioning to place the images relative to the viewport
+            position: 'fixed', // Use fixed positioning to place the image relative to the viewport
             top: '50%',
             transform: 'translateY(-50%)',
             [image.side]: '0', // Left or right side of the screen
-            zIndex: 100, // Ensure images are on top of the card grid
+            zIndex: 100, // Ensure image is on top of the card grid
             width: '100px', // Customize image size as needed
+            height: '100px',
             display: 'block',
             transition: 'opacity 3s ease-out',
-            opacity: 1, // Fully visible when they appear
+            opacity: 1, // Fully visible when it appears
           }}
         />
       )}
