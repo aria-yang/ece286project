@@ -3,17 +3,21 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "hosting": {
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  },
-  "storage": {
-    "rules": "storage.rules"
-  },
+    "hosting": {
+      "public": "build",
+      "headers": [
+        {
+          "source": "/**",
+          "headers": [
+            {
+              "key": "Content-Security-Policy",
+              "value": "script-src 'self' https://ece286project.web.app 'unsafe-inline' 'unsafe-eval'; object-src 'none';"
+            }
+          ]
+        }
+      ]
+    }
+  ,
   "emulators": {
     "auth": {
       "port": 9099
@@ -27,6 +31,9 @@
     "ui": {
       "enabled": true
     },
-    "singleProjectMode": true
+    "singleProjectMode": true,
+    "storage": {
+      "port": 9199
+    }
   }
 }
