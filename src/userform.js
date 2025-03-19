@@ -1,27 +1,30 @@
 import { db, collection, addDoc } from './config/firebase';
 import React, { useState } from 'react';
 
-const UserForm = () => {
+const UserForm = ({ score, timeTaken, setUserDataSubmitted }) => {
   const [grade, setGrade] = useState('');
   const [courseCode, setCourseCode] = useState('');
   const [period, setPeriod] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false); // Track submission status
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       // Get reference to 'users' collection
-      const userCollection = collection(db, 'users');  // 'users' is the Firestore collection name
+      const userCollection = collection(db, 'users');
 
       // Add user data to Firestore
       await addDoc(userCollection, {
         grade: grade,
         courseCode: courseCode,
         period: period,
+        score: score,          // Add score to the document
+        timeTaken: timeTaken,  // Add timeTaken to the document
       });
 
       // Mark the form as submitted
       setIsSubmitted(true);
+      setUserDataSubmitted(true);  // Notify parent that data is submitted
 
       alert('Data saved successfully!');
     } catch (error) {
@@ -31,7 +34,7 @@ const UserForm = () => {
 
   return (
     <div>
-      {!isSubmitted ? ( // Show the form only if not submitted
+      {!isSubmitted ? (
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -54,7 +57,7 @@ const UserForm = () => {
           <button type="submit">Submit</button>
         </form>
       ) : (
-        <p>Thank you for submitting your data!</p> // Show a message after submission
+        <p>Form submitted!</p>
       )}
     </div>
   );

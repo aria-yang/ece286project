@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import SingleCard from './components/SingleCard';
 import Cookies from 'js-cookie';
 import UserForm from './userform.js';
-import firebaseApp from './config/firebase'; // Import firebase
+import { db } from './config/firebase'; // Import firebase
+import { getDocs, collection } from 'firebase/firestore';
 
 const cardImages = [
   { "src": "/img/0.png", clicked: false },
@@ -46,6 +47,7 @@ function App() {
   const [image, setImage] = useState(null); 
   const [gamePlayed, setGamePlayed] = useState(Cookies.get('played'));
   const [userDataSubmitted, setUserDataSubmitted] = useState(false); // Add this state
+  const [run, setRun] = useState([]); // Add this state
 
   // Insert one image (either left or right) 5 seconds after the start time
   const insertImageAtFiveSeconds = () => {
@@ -115,7 +117,13 @@ function App() {
   return (
     <div className="App">
       <h1>Number Game</h1>
-      {!userDataSubmitted && <UserForm setUserDataSubmitted={setUserDataSubmitted} />}
+      {/* UserForm appears at the start */}
+      <UserForm 
+        score={score} 
+        timeTaken={timeTaken} 
+        setUserDataSubmitted={setUserDataSubmitted} 
+        userDataSubmitted={userDataSubmitted}
+      />
 
       <button onClick={shuffleCards}>Start Game</button>
       <p>Turns: {turns}</p>
