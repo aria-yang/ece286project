@@ -1,8 +1,14 @@
+/* App.css */
+
+/* Main container */
 .App {
   text-align: center;
   max-width: 860px;
   margin: 40px auto;
+  padding-bottom: 140px; /* More space for the larger ad */
 }
+
+/* Button styles */
 button {
   background: none;
   border: 2px solid #fff;
@@ -13,48 +19,89 @@ button {
   cursor: pointer;
   font-size: 1em;
 }
+
 button:hover {
   background: #9c4865;
   color: #fff;
 }
-.card-grid {
-  margin-top: 40px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-gap: 20px;
-}
-/* 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Ad banner */
+.ad-banner {
+  position: fixed; /* Keep ad fixed at the bottom */
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f1c40f;
+  padding: 30px; /* More padding */
+  text-align: center;
+  font-size: 2em; /* Large text */
+  font-weight: bold;
+  color: #333;
+  width: 100%; /* Full width */
+  max-width: 1000px;
+  height: 140px; /* Increased height */
+  border-radius: 15px 15px 0 0;
+  z-index: 100;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+/* Ad image */
+.ad-banner img {
+  max-width: 180px; /* Make the ad image bigger */
+  max-height: 100px;
+  object-fit: contain;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Card grid layout - 4x4 grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 10px;
+  width: 350px;  /* Ensure fixed size */
+  height: 350px; /* Ensure grid is not collapsing */
+  margin: auto;
+  position: relative;
+}
+
+/* Shrink card size */
+.card-grid img {
+  width: 80px;  /* Adjust size */
+  height: 80px;
+  object-fit: contain;
+}
+
+/* Ensure the grid stays 4x4 on all devices */
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
   }
-  to {
-    transform: rotate(360deg);
+
+  .card-grid img {
+    width: 70px; /* Smaller cards on mobile */
+    height: 70px;
   }
-} */
+
+  .ad-banner {
+    background-color: #ffffff;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px; /* Smaller banner height */
+  }
+  
+  .ad-banner img {
+    width: 200px;
+    max-height: 100%; /* Make image fill the banner */
+    object-fit: contain;
+  }
+}

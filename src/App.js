@@ -21,16 +21,16 @@ const cardImages = [
   { "src": "/img/Blank3.png", clicked: false },
   { "src": "/img/Blank4.png", clicked: false },
   { "src": "/img/Blank5.png", clicked: false },
-  { "src": "/img/Blank6.png", clicked: false },
-  { "src": "/img/Blank7.png", clicked: false },
-  { "src": "/img/Blank8.png", clicked: false },
-  { "src": "/img/Blank9.png", clicked: false },
-  { "src": "/img/Blank10.png", clicked: false },
-  { "src": "/img/Blank11.png", clicked: false },
-  { "src": "/img/Blank12.png", clicked: false },
-  { "src": "/img/Blank13.png", clicked: false },
-  { "src": "/img/Blank14.png", clicked: false },
-  { "src": "/img/Blank15.png", clicked: false }
+  { "src": "/img/Blank6.png", clicked: false }
+];
+
+const adImages = [
+  "/ads/ad6.png",
+  "/ads/ad5.png",
+  "/ads/ad3.png",
+  "/ads/ad4.png",
+  "/ads/sephora.png",
+  "/ads/travel.png"
 ];
 
 function App() {
@@ -38,7 +38,7 @@ function App() {
   const [cards, setCards] = useState([]);
   const [turns, setTurns] = useState(0);
   const [score, setScore] = useState(0);
-  const [gameStart, setGameStart] = useState(true);
+  const [gameStart, setGameStart] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
@@ -50,6 +50,10 @@ function App() {
   const [period, setPeriod] = useState('');
   const [userDataSubmitted, setUserDataSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Ad-related state
+  const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const [showAd, setShowAd] = useState(false);
 
   // Insert one image (either left or right) 5 seconds after the start time
   const insertImageAtFiveSeconds = () => {
@@ -68,6 +72,18 @@ function App() {
       insertImageAtFiveSeconds();
     }
   }, [gameStart]);
+
+  useEffect(() => {
+    const adInterval = setInterval(() => {
+      setCurrentAdIndex(prevIndex => (prevIndex + 1) % adImages.length);
+      setShowAd(true);
+      setTimeout(() => {
+        setShowAd(false);
+      }, 2000);
+    }, 5000);
+
+    return () => clearInterval(adInterval);
+  }, []);
 
   // Handle card shuffling
   const shuffleCards = () => {
@@ -91,7 +107,7 @@ function App() {
     setTimeout(() => {
       setGameStart(false);
       setStartTime(Date.now());
-    }, 7000);
+    }, 12000);
 
     Cookies.set('played', 'true', { expires: 1 });
   };
@@ -177,9 +193,20 @@ function App() {
         </form>
       ) : (
         <>
-          {/* Game start button */}
-          <button onClick={shuffleCards}>Start Game</button>
+          {/* Number of turns */}
           <p>Turns: {turns}</p>
+
+          {/* Ad banner */}
+          <div className="ad-banner">
+            {showAd && (
+              <img src={adImages[currentAdIndex]} alt="Ad" style={{ width: '100px', height: '50px' }} />
+            )}
+          </div>
+
+          {/* Game start button */}
+          {!gameStart && !gameOver && (
+            <button onClick={shuffleCards}>Start Game</button>
+          )}
         </>
       )}
 
