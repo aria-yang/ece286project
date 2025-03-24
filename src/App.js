@@ -21,7 +21,7 @@ const cardImages = [
   { "src": "/img/Blank5.png", clicked: false },
   { "src": "/img/Blank6.png", clicked: false }, 
   { "src": "/img/5.png", clicked: false },
-  { "src": "/img/6.png", clicked: false }
+  { "src": "/img/6.png", clicked: false },
 ];
 
 const adImages = [
@@ -34,7 +34,7 @@ const adImages = [
 ];
 
 function App() {
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState([...cardImages]); // Use a fixed card board
   const [turns, setTurns] = useState(0);
   const [score, setScore] = useState(0);
   const [gameStart, setGameStart] = useState(false);
@@ -53,16 +53,13 @@ function App() {
   const [showAds] = useState(Math.random() > 0.5);  // 50% chance to show ads
   const [adPosition, setAdPosition] = useState('top');
 
-  const setFixedCards = () => {
+  // Removed shuffleCards logic; use the same set board for every game
+  const startGame = () => {
     if (Cookies.get('played')) {
       alert("You've already played the game!");
       return;
     }
-  
-    const fixedCards = [...cardImages]
-      .map((card) => ({ ...card, id: Math.random(), clicked: false }));
-  
-    setCards(fixedCards);
+
     setTurns(0);
     setScore(0);
     setGameOver(false);
@@ -94,6 +91,7 @@ function App() {
       setScore((prevScore) => prevScore + 1);
     }
 
+    // If 10 turns are reached, game is over
     if (turns === 9) {
       setEndTime(Date.now());
       setGameOver(true);
@@ -143,7 +141,7 @@ function App() {
 
   useEffect(() => {
     const disableScroll = (e) => e.preventDefault();
-
+    
     if (gameStart) {
       window.addEventListener('wheel', disableScroll, { passive: false });
       window.addEventListener('touchmove', disableScroll, { passive: false });
@@ -151,7 +149,7 @@ function App() {
       window.removeEventListener('wheel', disableScroll);
       window.removeEventListener('touchmove', disableScroll);
     }
-
+  
     return () => {
       window.removeEventListener('wheel', disableScroll);
       window.removeEventListener('touchmove', disableScroll);
@@ -189,30 +187,20 @@ function App() {
         <>
           <p>Turns: {turns}</p>
 
-          {/* Ad banners at top or bottom */}
-          <div
-            className={`ad-banner ${adPosition}`}
-            style={{ position: 'absolute', [adPosition]: '10px', width: '100%', textAlign: 'center' }}
-          >
+          <div className={`ad-banner ${adPosition}`} style={{ position: 'absolute', [adPosition]: '10px', width: '100%', textAlign: 'center' }}>
             {showAds && (
-              <img
-                src={adImages[currentAdIndex]}
-                alt="Ad"
-                style={{ width: '300px', height: '150px', animation: 'shake 0.5s infinite' }}
-              />
+              <img src={adImages[currentAdIndex]} alt="Ad" style={{ width: '250px', height: 'auto' }} />
             )}
           </div>
 
-          {/* Game start button - should ONLY appear before the first shuffle */}
           {!gameStart && !gameOver && turns === 0 && (
-            <button onClick={setFixedCards}>Start Game</button>
+            <button onClick={startGame}>Start Game</button>
           )}
         </>
       )}
 
       {gameOver && <p>Game Over! Your final score: {score}, Accuracy: {accuracy}%</p>}
 
-      {/* 4x4 Grid of Cards */}
       <div className="card-grid">
         {cards.map((card) => (
           <SingleCard
