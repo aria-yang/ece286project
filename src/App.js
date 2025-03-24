@@ -1,7 +1,7 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { db } from './config/firebase'; // Import firebase
+import { db } from './config/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import SingleCard from './components/SingleCard';
 
@@ -34,7 +34,6 @@ const adImages = [
 ];
 
 function App() {
-  // Game-related state
   const [cards, setCards] = useState([]);
   const [turns, setTurns] = useState(0);
   const [score, setScore] = useState(0);
@@ -43,49 +42,17 @@ function App() {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const accuracy = turns > 0 ? ((score / turns) * 100).toFixed(1) : 0;
-  
-  // User form-related state
+
   const [grade, setGrade] = useState('');
   const [courseCode, setCourseCode] = useState('');
   const [period, setPeriod] = useState('');
   const [userDataSubmitted, setUserDataSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Ad-related state
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [showAd, setShowAd] = useState(false);
+  const [adPosition, setAdPosition] = useState('top');
 
-  // Insert one image (either left or right) 5 seconds after the start time
-  const insertImageAtFiveSeconds = () => {
-    const timeout = 5000;
-    setTimeout(() => {
-      const side = Math.random() < 0.5 ? 'left' : 'right';
-      // Update UI with inserted image (optional)
-      setTimeout(() => {
-        // Remove the image after a few seconds (optional)
-      }, 3000);
-    }, timeout);
-  };
-
-  useEffect(() => {
-    if (gameStart) {
-      insertImageAtFiveSeconds();
-    }
-  }, [gameStart]);
-
-  useEffect(() => {
-    const adInterval = setInterval(() => {
-      setCurrentAdIndex(prevIndex => (prevIndex + 1) % adImages.length);
-      setShowAd(true);
-      setTimeout(() => {
-        setShowAd(false);
-      }, 2000);
-    }, 5000);
-
-    return () => clearInterval(adInterval);
-  }, []);
-
-  // Handle card shuffling
   const shuffleCards = () => {
     if (Cookies.get('played')) {
       alert("You've already played the game!");
@@ -112,35 +79,39 @@ function App() {
     Cookies.set('played', 'true', { expires: 1 });
   };
 
-  // Handle player card choice
   const handleChoice = (card) => {
-    if (gameOver || card.clicked) return;
-    const filename = card.src.split('/').pop();
-    setTurns(prevTurns => prevTurns + 1);
-    setCards(prevCards =>
-      prevCards.map(c =>
+    if (gameOver || card.clicked) return;  // Prevent click if game is over or card is already clicked
+
+    const filename = card.src.split('/').pop(); // Get the image filename
+    const expectedNumber = turns % 10; // Get expected number for the turn
+
+    setTurns((prevTurns) => prevTurns + 1);
+    setCards((prevCards) =>
+      prevCards.map((c) =>
         c.src === card.src ? { ...c, clicked: true } : c
       )
     );
-    if (filename === `${turns}.png`) {
-      setScore(prevScore => prevScore + 1);
+
+    if (filename === `${expectedNumber}.png`) {
+      setScore((prevScore) => prevScore + 1);
     }
+
+    // If 10 turns are reached, game is over
     if (turns === 9) {
       setEndTime(Date.now());
       setGameOver(true);
-      saveGameData(score, startTime, Date.now()); // Save game data
+      saveGameData(score, startTime, Date.now());
     }
   };
 
-  // Save game data to Firebase
   const saveGameData = async (score, start, end) => {
     const timeTaken = ((end - start) / 1000).toFixed(2);
     try {
       const userCollection = collection(db, 'users');
       await addDoc(userCollection, {
-        grade: grade, // Form data
-        courseCode: courseCode, // Form data
-        period: period, // Form data
+        grade: grade,
+        courseCode: courseCode,
+        period: period,
         score: score,
         timeTaken: timeTaken,
       });
@@ -151,7 +122,6 @@ function App() {
     }
   };
 
-  // Handle form submission
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
@@ -160,14 +130,27 @@ function App() {
       return;
     }
 
-    setUserDataSubmitted(true); // Mark form data as submitted
+    setUserDataSubmitted(true);
   };
+
+  useEffect(() => {
+    const adInterval = setInterval(() => {
+      setCurrentAdIndex((prevIndex) => (prevIndex + 1) % adImages.length);
+      setAdPosition(Math.random() > 0.5 ? 'top' : 'bottom');  // Randomize ad position
+      setShowAd(true);
+  
+      setTimeout(() => {
+        setShowAd(false);
+      }, 2000);
+    }, 5000);
+  
+    return () => clearInterval(adInterval);
+  }, []);  
 
   return (
     <div className="App">
       <h1>Number Game</h1>
 
-      {/* User form */}
       {!userDataSubmitted ? (
         <form onSubmit={handleFormSubmit}>
           <input
@@ -193,13 +176,15 @@ function App() {
         </form>
       ) : (
         <>
-          {/* Number of turns */}
           <p>Turns: {turns}</p>
 
-          {/* Ad banner */}
-          <div className="ad-banner">
+          {/* Ad banners at top or bottom */}
+          <div
+            className={`ad-banner ${adPosition}`}
+            style={{ position: 'absolute', [adPosition]: '10px', width: '100%', textAlign: 'center' }}
+          >
             {showAd && (
-              <img src={adImages[currentAdIndex]} alt="Ad" style={{ width: '100px', height: '50px' }} />
+              <img src={adImages[currentAdIndex]} alt="Ad" style={{ width: '150px', height: '75px' }} />
             )}
           </div>
 
@@ -212,12 +197,12 @@ function App() {
 
       {gameOver && <p>Game Over! Your final score: {score}, Accuracy: {accuracy}%</p>}
 
-      {/* Display cards */}
+      {/* 4x4 Grid of Cards */}
       <div className="card-grid">
-        {cards.map(card => (
-          <SingleCard 
-            key={card.id} 
-            card={card} 
+        {cards.map((card) => (
+          <SingleCard
+            key={card.id}
+            card={card}
             handleChoice={handleChoice}
             flipped={gameStart || gameOver}
           />
