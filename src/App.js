@@ -58,26 +58,26 @@ function App() {
       alert("You've already played the game!");
       return;
     }
-
+  
     const shuffledCards = [...cardImages]
       .sort(() => Math.random() - 0.5)
-      .map((card) => ({ ...card, id: Math.random() }));
-
+      .map((card) => ({ ...card, id: Math.random(), clicked: false }));
+  
     setCards(shuffledCards);
     setTurns(0);
     setScore(0);
     setGameOver(false);
     setGameStart(true);
-    setStartTime(null);
+    setStartTime(Date.now());
     setEndTime(null);
-
+  
     setTimeout(() => {
       setGameStart(false);
-      setStartTime(Date.now());
     }, 12000);
-
+  
     Cookies.set('played', 'true', { expires: 1 });
   };
+  
 
   const handleChoice = (card) => {
     if (gameOver || card.clicked) return;  // Prevent click if game is over or card is already clicked
@@ -136,16 +136,35 @@ function App() {
   useEffect(() => {
     const adInterval = setInterval(() => {
       setCurrentAdIndex((prevIndex) => (prevIndex + 1) % adImages.length);
-      setAdPosition(Math.random() > 0.5 ? 'top' : 'bottom');  // Randomize ad position
+      setAdPosition(Math.random() > 0.5 ? 'top' : 'bottom');  
       setShowAd(true);
   
       setTimeout(() => {
         setShowAd(false);
-      }, 2000);
-    }, 5000);
+      }, 5000);  // Ads stay longer
+  
+    }, 3000);  // Appear more frequently
   
     return () => clearInterval(adInterval);
-  }, []);  
+  }, []);
+
+  useEffect(() => {
+    const disableScroll = (e) => e.preventDefault();
+    
+    if (gameStart) {
+      window.addEventListener('wheel', disableScroll, { passive: false });
+      window.addEventListener('touchmove', disableScroll, { passive: false });
+    } else {
+      window.removeEventListener('wheel', disableScroll);
+      window.removeEventListener('touchmove', disableScroll);
+    }
+  
+    return () => {
+      window.removeEventListener('wheel', disableScroll);
+      window.removeEventListener('touchmove', disableScroll);
+    };
+  }, [gameStart]);  // Only applies while the game is running
+  
 
   return (
     <div className="App">
@@ -188,8 +207,8 @@ function App() {
             )}
           </div>
 
-          {/* Game start button */}
-          {!gameStart && !gameOver && (
+          {/* Game start button - should ONLY appear before the first shuffle */}
+          {!gameStart && !gameOver && turns === 0 && (
             <button onClick={shuffleCards}>Start Game</button>
           )}
         </>

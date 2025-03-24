@@ -4,7 +4,7 @@ body, html {
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
   font-family: Arial, sans-serif;
 }
 
@@ -36,29 +36,22 @@ body, html {
   max-width: 80px; /* Adjust for mobile */
 }
 
-/* Ensure ads don't block the grid */
-.ad-container {
+.ad-banner {
   position: absolute;
   width: 100%;
   text-align: center;
-  pointer-events: none; /* Prevent ads from blocking clicks */
+  z-index: 1000;
+  animation: shake 0.2s infinite alternate; /* Add movement effect */
 }
 
-.ad-container img {
-  max-width: 180px;
+.ad-banner img {
+  max-width: 200px; /* Make ads bigger */
   height: auto;
-  pointer-events: auto; /* Allows users to click ads if necessary */
 }
 
-/* Ads can appear at the top or bottom */
-.ad-container.top {
-  top: 0;
-  animation: flyInFromTop 1s ease-in-out;
-}
-
-.ad-container.bottom {
-  bottom: 0;
-  animation: flyInFromBottom 1s ease-in-out;
+@keyframes shake {
+  from { transform: translateX(-10px); }
+  to { transform: translateX(10px); }
 }
 
 /* Button Styles */
