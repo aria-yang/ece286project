@@ -6,22 +6,22 @@ import { addDoc, collection } from 'firebase/firestore';
 import SingleCard from './components/SingleCard';
 
 const cardImages = [
-  { "src": "/img/0.png", clicked: false },
-  { "src": "/img/1.png", clicked: false },
-  { "src": "/img/2.png", clicked: false },
-  { "src": "/img/3.png", clicked: false },
-  { "src": "/img/4.png", clicked: false },
-  { "src": "/img/5.png", clicked: false },
-  { "src": "/img/6.png", clicked: false },
-  { "src": "/img/7.png", clicked: false },
-  { "src": "/img/8.png", clicked: false },
   { "src": "/img/9.png", clicked: false },
+  { "src": "/img/8.png", clicked: false },
+  { "src": "/img/0.png", clicked: false },
+  { "src": "/img/7.png", clicked: false },
   { "src": "/img/Blank.png", clicked: false },
   { "src": "/img/Blank2.png", clicked: false },
+  { "src": "/img/1.png", clicked: false },
+  { "src": "/img/3.png", clicked: false },
+  { "src": "/img/4.png", clicked: false },
   { "src": "/img/Blank3.png", clicked: false },
   { "src": "/img/Blank4.png", clicked: false },
+  { "src": "/img/2.png", clicked: false },
   { "src": "/img/Blank5.png", clicked: false },
-  { "src": "/img/Blank6.png", clicked: false }
+  { "src": "/img/Blank6.png", clicked: false }, 
+  { "src": "/img/5.png", clicked: false },
+  { "src": "/img/6.png", clicked: false }
 ];
 
 const adImages = [
@@ -53,17 +53,16 @@ function App() {
   const [showAds] = useState(Math.random() > 0.5);  // 50% chance to show ads
   const [adPosition, setAdPosition] = useState('top');
 
-  const shuffleCards = () => {
+  const setFixedCards = () => {
     if (Cookies.get('played')) {
       alert("You've already played the game!");
       return;
     }
   
-    const shuffledCards = [...cardImages]
-      .sort(() => Math.random() - 0.5)
+    const fixedCards = [...cardImages]
       .map((card) => ({ ...card, id: Math.random(), clicked: false }));
   
-    setCards(shuffledCards);
+    setCards(fixedCards);
     setTurns(0);
     setScore(0);
     setGameOver(false);
@@ -206,7 +205,7 @@ function App() {
 
           {/* Game start button - should ONLY appear before the first shuffle */}
           {!gameStart && !gameOver && turns === 0 && (
-            <button onClick={shuffleCards}>Start Game</button>
+            <button onClick={setFixedCards}>Start Game</button>
           )}
         </>
       )}
