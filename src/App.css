@@ -4,7 +4,7 @@ body, html {
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden; /* Prevent horizontal scrolling for the whole page */
   font-family: Arial, sans-serif;
 }
 
@@ -19,6 +19,7 @@ body, html {
   padding: 20px;
   box-sizing: border-box;
   position: relative; /* Ensures ads position properly */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .card-grid {
@@ -28,9 +29,10 @@ body, html {
   justify-content: center;
   align-items: center;
   width: 100%; /* Ensure full width */
-  margin-top: 100px; /* Add space to avoid overlap with the ad */
+  margin-top: 60px; /* Reduced space to move the grid up */
   max-height: 60vh; /* Restrict the grid's height */
   overflow-y: auto; /* Enable scrolling if the grid content overflows */
+  margin-bottom: 20px; /* Add space below the grid */
 }
 
 .card-grid img {
@@ -51,7 +53,7 @@ body, html {
 }
 
 .ad-banner img {
-  width: 250px; /* Set a fixed width for the ad */
+  width: 180px; /* Shrink the ad width */
   height: auto; /* Maintain aspect ratio */
   max-width: 100%; /* Prevent scaling beyond container */
   animation: bounce 1s infinite; /* Bounce animation */

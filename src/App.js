@@ -34,7 +34,7 @@ const adImages = [
 ];
 
 function App() {
-  const [cards, setCards] = useState([...cardImages]); // Use a fixed card board
+  const [cards, setCards] = useState([...cardImages]); // Fixed card board
   const [turns, setTurns] = useState(0);
   const [score, setScore] = useState(0);
   const [gameStart, setGameStart] = useState(false);
@@ -51,7 +51,6 @@ function App() {
 
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [showAds] = useState(Math.random() > 0.5);  // 50% chance to show ads
-  const [adPosition, setAdPosition] = useState('top');
 
   // Removed shuffleCards logic; use the same set board for every game
   const startGame = () => {
@@ -66,11 +65,11 @@ function App() {
     setGameStart(true);
     setStartTime(Date.now());
     setEndTime(null);
-  
+
     setTimeout(() => {
       setGameStart(false);
     }, 12000);
-  
+
     Cookies.set('played', 'true', { expires: 1 });
   };
 
@@ -133,7 +132,6 @@ function App() {
 
     const adInterval = setInterval(() => {
       setCurrentAdIndex((prevIndex) => (prevIndex + 1) % adImages.length);
-      setAdPosition(Math.random() > 0.5 ? 'top' : 'bottom');
     }, 5000);
 
     return () => clearInterval(adInterval);
@@ -160,57 +158,66 @@ function App() {
     <div className="App">
       <h1>Number Game</h1>
 
+      {/* Show the form first if user data has not been submitted */}
       {!userDataSubmitted ? (
-        <form onSubmit={handleFormSubmit}>
-          <input
-            type="text"
-            placeholder="Grade"
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Course Code"
-            value={courseCode}
-            onChange={(e) => setCourseCode(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Period of Day"
-            value={period}
-            onChange={(e) => setPeriod(e.target.value)}
-          />
-          {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-          <button type="submit">Submit</button>
-        </form>
+        <div className="form-container">
+          <form onSubmit={handleFormSubmit}>
+            <input
+              type="text"
+              placeholder="Grade"
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Course Code"
+              value={courseCode}
+              onChange={(e) => setCourseCode(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Period of Day"
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+            />
+            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+            <button type="submit">Submit</button>
+          </form>
+        </div>
       ) : (
         <>
           <p>Turns: {turns}</p>
 
-          <div className={`ad-banner ${adPosition}`} style={{ position: 'absolute', [adPosition]: '10px', width: '100%', textAlign: 'center' }}>
+          {/* Ad Banner - Always positioned at the top */}
+          <div className="ad-banner" style={{ position: 'absolute', top: '10px', width: '100%', textAlign: 'center' }}>
             {showAds && (
               <img src={adImages[currentAdIndex]} alt="Ad" style={{ width: '250px', height: 'auto' }} />
             )}
           </div>
 
+          {/* Start button appears if game hasn't started */}
           {!gameStart && !gameOver && turns === 0 && (
             <button onClick={startGame}>Start Game</button>
           )}
         </>
       )}
 
+      {/* Game Over Message */}
       {gameOver && <p>Game Over! Your final score: {score}, Accuracy: {accuracy}%</p>}
 
-      <div className="card-grid">
-        {cards.map((card) => (
-          <SingleCard
-            key={card.id}
-            card={card}
-            handleChoice={handleChoice}
-            flipped={gameStart || gameOver}
-          />
-        ))}
-      </div>
+      {/* Game Board - Only show after form submission */}
+      {userDataSubmitted && !gameOver && (
+        <div className="card-grid">
+          {cards.map((card) => (
+            <SingleCard
+              key={card.id}
+              card={card}
+              handleChoice={handleChoice}
+              flipped={gameStart || gameOver}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
