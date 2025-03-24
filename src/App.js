@@ -50,6 +50,7 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const [showAds] = useState(Math.random() > 0.5);  // 50% chance to show ads
   const [adPosition, setAdPosition] = useState('top');
 
   const shuffleCards = () => {
@@ -57,11 +58,11 @@ function App() {
       alert("You've already played the game!");
       return;
     }
-
+  
     const shuffledCards = [...cardImages]
       .sort(() => Math.random() - 0.5)
       .map((card) => ({ ...card, id: Math.random(), clicked: false }));
-
+  
     setCards(shuffledCards);
     setTurns(0);
     setScore(0);
@@ -69,19 +70,19 @@ function App() {
     setGameStart(true);
     setStartTime(Date.now());
     setEndTime(null);
-
+  
     setTimeout(() => {
       setGameStart(false);
-    }, 12000); // Game ends after 12 seconds
-
+    }, 12000);
+  
     Cookies.set('played', 'true', { expires: 1 });
   };
 
   const handleChoice = (card) => {
     if (gameOver || card.clicked) return;
 
-    const filename = card.src.split('/').pop();
-    const expectedNumber = turns % 10;
+    const filename = card.src.split('/').pop(); // Get the image filename
+    const expectedNumber = turns % 10; // Get expected number for the turn
 
     setTurns((prevTurns) => prevTurns + 1);
     setCards((prevCards) =>
@@ -110,7 +111,7 @@ function App() {
         period,
         score,
         timeTaken,
-        ads: 'Yes', // Assume ads are shown for this user
+        ads: showAds ? 'Yes' : 'No'
       });
       alert('Data saved successfully!');
     } catch (error) {
@@ -131,15 +132,15 @@ function App() {
   };
 
   useEffect(() => {
-    if (!gameStart) return;
+    if (!showAds) return;
 
     const adInterval = setInterval(() => {
       setCurrentAdIndex((prevIndex) => (prevIndex + 1) % adImages.length);
       setAdPosition(Math.random() > 0.5 ? 'top' : 'bottom');
-    }, 5000); // Change ad every 5 seconds
+    }, 5000);
 
     return () => clearInterval(adInterval);
-  }, [gameStart]);
+  }, [showAds]);
 
   useEffect(() => {
     const disableScroll = (e) => e.preventDefault();
@@ -189,25 +190,21 @@ function App() {
         <>
           <p>Turns: {turns}</p>
 
-          {/* Ad banners shown during the game */}
-          {gameStart && (
-            <div
-              className={`ad-banner ${adPosition}`}
-              style={{
-                position: 'absolute',
-                [adPosition]: '10px',
-                width: '100%',
-                textAlign: 'center',
-              }}
-            >
+          {/* Ad banners at top or bottom */}
+          <div
+            className={`ad-banner ${adPosition}`}
+            style={{ position: 'absolute', [adPosition]: '10px', width: '100%', textAlign: 'center' }}
+          >
+            {showAds && (
               <img
                 src={adImages[currentAdIndex]}
-                alt="Advertisement"
-                style={{ width: '150px', height: '75px' }}
+                alt="Ad"
+                style={{ width: '300px', height: '150px', animation: 'shake 0.5s infinite' }}
               />
-            </div>
-          )}
+            )}
+          </div>
 
+          {/* Game start button - should ONLY appear before the first shuffle */}
           {!gameStart && !gameOver && turns === 0 && (
             <button onClick={shuffleCards}>Start Game</button>
           )}
@@ -216,6 +213,7 @@ function App() {
 
       {gameOver && <p>Game Over! Your final score: {score}, Accuracy: {accuracy}%</p>}
 
+      {/* 4x4 Grid of Cards */}
       <div className="card-grid">
         {cards.map((card) => (
           <SingleCard
