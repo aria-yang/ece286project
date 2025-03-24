@@ -50,8 +50,10 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const [showAd, setShowAd] = useState(false);
+  // const [showAd, setShowAd] = useState(false);
+  const [showAds] = useState(Math.random() > 0.5);  // 50% chance to show ads
   const [adPosition, setAdPosition] = useState('top');
+  // const [adTimeout, setAdTimeout] = useState(null);
 
   const shuffleCards = () => {
     if (Cookies.get('played')) {
@@ -77,7 +79,6 @@ function App() {
   
     Cookies.set('played', 'true', { expires: 1 });
   };
-  
 
   const handleChoice = (card) => {
     if (gameOver || card.clicked) return;  // Prevent click if game is over or card is already clicked
@@ -107,13 +108,13 @@ function App() {
   const saveGameData = async (score, start, end) => {
     const timeTaken = ((end - start) / 1000).toFixed(2);
     try {
-      const userCollection = collection(db, 'users');
-      await addDoc(userCollection, {
-        grade: grade,
-        courseCode: courseCode,
-        period: period,
-        score: score,
-        timeTaken: timeTaken,
+      await addDoc(collection(db, 'users'), {
+        grade,
+        courseCode,
+        period,
+        score,
+        timeTaken,
+        ads: showAds ? 'Yes' : 'No'  // Log whether this user is in the "ads" group
       });
       alert('Data saved successfully!');
     } catch (error) {
@@ -134,20 +135,18 @@ function App() {
   };
 
   useEffect(() => {
+    if (!showAds) return; // Only show ads if 'showAds' is true
+  
+    // Start an interval to change ads
     const adInterval = setInterval(() => {
       setCurrentAdIndex((prevIndex) => (prevIndex + 1) % adImages.length);
-      setAdPosition(Math.random() > 0.5 ? 'top' : 'bottom');  
-      setShowAd(true);
+      setAdPosition(Math.random() > 0.5 ? 'top' : 'bottom'); // Randomize position
+    }, 5000); // Change ad every 5 seconds
   
-      setTimeout(() => {
-        setShowAd(false);
-      }, 5000);  // Ads stay longer
+    return () => clearInterval(adInterval); // Clean up the interval
+  }, [showAds]); // Run only if 'showAds' is true
   
-    }, 3000);  // Appear more frequently
   
-    return () => clearInterval(adInterval);
-  }, []);
-
   useEffect(() => {
     const disableScroll = (e) => e.preventDefault();
     
@@ -165,7 +164,6 @@ function App() {
     };
   }, [gameStart]);  // Only applies while the game is running
   
-
   return (
     <div className="App">
       <h1>Number Game</h1>
@@ -199,10 +197,10 @@ function App() {
 
           {/* Ad banners at top or bottom */}
           <div
-            className={`ad-banner ${adPosition}`}
-            style={{ position: 'absolute', [adPosition]: '10px', width: '100%', textAlign: 'center' }}
+          className={`ad-banner ${adPosition}`}
+          style={{ position: 'absolute', [adPosition]: '10px', width: '100%', textAlign: 'center' }}
           >
-            {showAd && (
+            {showAds && (
               <img src={adImages[currentAdIndex]} alt="Ad" style={{ width: '150px', height: '75px' }} />
             )}
           </div>
