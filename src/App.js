@@ -7,21 +7,21 @@ import SingleCard from './components/SingleCard';
 
 const cardImages = [
   { "src": "/img/9.png", clicked: false },
+  { "src": "/img/6.png", clicked: false },
+  { "src": "/img/Blank.png", clicked: false },
   { "src": "/img/8.png", clicked: false },
   { "src": "/img/0.png", clicked: false },
-  { "src": "/img/7.png", clicked: false },
-  { "src": "/img/Blank.png", clicked: false },
   { "src": "/img/Blank2.png", clicked: false },
   { "src": "/img/1.png", clicked: false },
   { "src": "/img/3.png", clicked: false },
-  { "src": "/img/4.png", clicked: false },
+  { "src": "/img/7.png", clicked: false },
   { "src": "/img/Blank3.png", clicked: false },
+  { "src": "/img/4.png", clicked: false },
   { "src": "/img/Blank4.png", clicked: false },
   { "src": "/img/2.png", clicked: false },
   { "src": "/img/Blank5.png", clicked: false },
   { "src": "/img/Blank6.png", clicked: false }, 
-  { "src": "/img/5.png", clicked: false },
-  { "src": "/img/6.png", clicked: false },
+  { "src": "/img/5.png", clicked: false }
 ];
 
 const adImages = [
