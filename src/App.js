@@ -164,13 +164,13 @@ function App() {
           <form onSubmit={handleFormSubmit}>
             <input
               type="text"
-              placeholder="Grade"
+              placeholder="Year of Study"
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
             />
             <input
               type="text"
-              placeholder="Course Code"
+              placeholder="Course Code of Favourite Course"
               value={courseCode}
               onChange={(e) => setCourseCode(e.target.value)}
             />
